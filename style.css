@@ -1,0 +1,447 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #2980b9;
+    --light-color: #ecf0f1;
+    --dark-color: #34495e;
+    --text-color: #333;
+    --shadow: 0 3px 10px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+/* Header */
+header {
+    background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+    color: white;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+}
+
+.header-content {
+    flex: 1;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+}
+
+header p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Menu Toggle (Hamburger) */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 24px;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: white;
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+/* Navigation */
+nav {
+    background-color: var(--dark-color);
+    position: sticky;
+    top: 80px;
+    z-index: 99;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+}
+
+nav li {
+    margin: 0 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+nav a:hover, nav a.active {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Main Content */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+}
+
+section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 100px;
+}
+
+section h2 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+/* Info Boxes */
+.info-box {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.info-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.info-box h3 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.info-box ul, .info-box ol {
+    padding-left: 1.5rem;
+}
+
+.info-box li {
+    margin-bottom: 0.5rem;
+}
+
+/* Comparison Columns */
+.comparison {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.column {
+    flex: 1;
+    min-width: 250px;
+    background-color: var(--light-color);
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.column h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+table th, table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Footer */
+footer {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Leaflet Map Styles */
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+    margin: 1rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.map-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 0.7rem 1.2rem;
+    border: 2px solid var(--secondary-color);
+    background: white;
+    color: var(--secondary-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.control-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.control-btn.active {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.control-btn.clear {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.control-btn.clear:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.map-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--light-color);
+    border-radius: 8px;
+}
+
+#markerList {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.marker-item {
+    padding: 0.7rem;
+    margin: 0.5rem 0;
+    background: white;
+    border-radius: 6px;
+    border-left: 4px solid var(--accent-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.marker-item .type {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-right: 1rem;
+}
+
+.marker-item .coords {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #666;
+    flex: 1;
+}
+
+.marker-item .delete {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* Leaflet customizations */
+.leaflet-popup-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.leaflet-control-layers {
+    border-radius: 6px !important;
+}
+
+.leaflet-bar {
+    border-radius: 6px !important;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+    
+    /* Navigation for mobile */
+    nav {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+    }
+    
+    nav.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+    }
+    
+    nav li {
+        margin: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    nav a {
+        padding: 1rem;
+        border-radius: 0;
+    }
+    
+    .comparison {
+        flex-direction: column;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    section h2 {
+        font-size: 1.7rem;
+    }
+    
+    /* Mobile map styles */
+    #map {
+        height: 400px;
+    }
+    
+    .map-controls {
+        justify-content: center;
+    }
+    
+    .control-btn {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+    
+    .marker-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+/* Animation for menu toggle when active */
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Animation for info boxes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.info-box {
+    animation: fadeInUp 0.6s ease-out;
+}

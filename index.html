@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Cognition and Navigation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background-color: #34495e;
+            padding: 0.8rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        nav a:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        section h2 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .subsection {
+            margin-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .subsection h3 {
+            font-size: 1.3rem;
+            color: #2980b9;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-box {
+            background-color: white;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .info-box h3 {
+            color: #2980b9;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .info-box ul, .info-box ol {
+            padding-left: 1.2rem;
+        }
+
+        .info-box li {
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .comparison {
+            display: flex;
+            gap: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .column {
+            flex: 1;
+            background-color: #ecf0f1;
+            padding: 0.8rem;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8rem 0;
+            font-size: 0.9rem;
+        }
+
+        table th, table td {
+            padding: 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* Estilos para imágenes */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .image-item {
+            text-align: center;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background-color: #f8f9fa;
+            padding: 5px;
+        }
+
+        .image-caption {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .single-image {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .single-image img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background-color: #f8f9fa;
+            padding: 5px;
+        }
+
+        /* Mapa - CORREGIDO */
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: 6px;
+            margin: 1rem 0;
+            touch-action: pan-x pan-y;
+            background-color: #e8e8e8;
+        }
+
+        /* Asegurar que el mapa se vea bien */
+        .leaflet-container {
+            background-color: #e8e8e8 !important;
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.8rem 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 0.6rem 1rem;
+            border: 2px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .control-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .control-btn.clear {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .control-btn.clear:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .map-info {
+            margin-top: 1.2rem;
+            padding: 0.8rem;
+            background: #ecf0f1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .marker-item {
+            padding: 0.6rem;
+            margin: 0.4rem 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            font-size: 0.85rem;
+        }
+
+        .mobile-hint {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 0.6rem;
+            margin: 0.4rem 0;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.2rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1.2rem 1rem;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            header p {
+                font-size: 0.9rem;
+            }
+            
+            nav ul {
+                gap: 0.5rem;
+            }
+            
+            nav a {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            
+            section h2 {
+                font-size: 1.4rem;
+            }
+            
+            .subsection h3 {
+                font-size: 1.2rem;
+            }
+            
+            .comparison {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            
+            #map {
+                height: 350px;
+            }
+            
+            .map-controls {
+                justify-content: center;
+            }
+            
+            .control-btn {
+                flex: 1;
+                min-width: 100px;
+                justify-content: center;
+                font-size: 0.8rem;
+                padding: 0.5rem 0.8rem;
+            }
+            
+            .mobile-hint {
+                display: block;
+            }
+            
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .single-image img {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Spatial Cognition and Navigation</h1>
+        <p>Exploring how we perceive, represent and navigate our environment</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#spatial-cognition"><i class="fas fa-brain"></i> Spatial Cognition</a></li>
+            <li><a href="#mental-map"><i class="fas fa-map"></i> Mental Map</a></li>
+            <li><a href="#orientation"><i class="fas fa-compass"></i> Orientation</a></li>
+            <li><a href="#orienteering"><i class="fas fa-hiking"></i> Orienteering</a></li>
+            <li><a href="#interactive-map"><i class="fas fa-map-marked-alt"></i> Interactive Map</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="spatial-cognition">
+            <h2>Spatial Cognition</h2>
+            <p>Spatial cognition is the study of how humans (and other species) acquire, represent, store, and use knowledge about space and spatial relationships.</p>
+            
+            <div class="info-box">
+                <h3>Key Characteristics</h3>
+                <ul>
+                    <li>Many species are capable of navigation and cognitive mapping</li>
+                    <li>Navigation, wayfinding, spatial updating and memory all play a role</li>
+                    <li>Emerged as a research field in the 1960s with authors like Lynch (1960) and Gould & White (1974)</li>
+                    <li>Interdisciplinary field: psychology, neuroscience, geography, AI, GIS, and cartography</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>Central Research Questions</h3>
+                <ul>
+                    <li>How is spatial knowledge acquired and stored in memory?</li>
+                    <li>In what format is this knowledge represented?</li>
+                    <li>How is spatial information transformed when we move or imagine movement?</li>
+                    <li>How does language contribute to constructing spatial representations?</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="mental-map">
+            <h2>Mental Map</h2>
+            <p>A mental map (or cognitive map) is a mental representation of spatial relationships that individuals use to acquire, maintain, and recall information about the locations and attributes of their environment.</p>
+            
+            <div class="image-gallery">
+                <div class="image-item">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_dMOrZb68L0C5yVLj_E3pwfrF4MjtiJKVgG_ajbsPXsmh-ogqwsogbsE7Z1Xl1BpvGm8-_oNrXHyfmF1e4UL0LcnrvsEMTQF7yqUI6AjL2N-qdFEe42TJ6JLiyEr263ImXLhxJz2tGws/s1600/Map+1+Mental+Map.jpg" alt="Mental Map Example 1" onerror="this.src='https://via.placeholder.com/300x180/3498db/ffffff?text=Mental+Map+1'">
+                    <div class="image-caption">Example of a mental map showing spatial relationships</div>
+                </div>
+                <div class="image-item">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Mental_map.png" alt="Mental Map Example 2" onerror="this.src='https://via.placeholder.com/300x180/2ecc71/ffffff?text=Mental+Map+2'">
+                    <div class="image-caption">Visual representation of cognitive mapping processes</div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>Construction Sources</h3>
+                <ul>
+                    <li>Movement through environments</li>
+                    <li>Visual landmarks</li>
+                    <li>Verbal descriptions</li>
+                    <li>Map reading</li>
+                    <li>Digital navigation aids</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>Applications</h3>
+                <ul>
+                    <li>In behavioral geography - studying how people perceive and interact with their environments</li>
+                    <li>In participatory mapping - asking citizens to sketch their view of a city or region</li>
+                    <li>In cartography - helps understand how people use maps versus how they think about space internally</li>
+                </ul>
+            </div>
+
+            <!-- Brain's Internal GPS como subapartado -->
+            <div class="subsection">
+                <h3>Brain's Internal GPS</h3>
+                <div class="info-box">
+                    <p>In 2014, the Nobel Prize awarded the discovery of our "internal GPS." John O'Keefe identified place cells in the hippocampus, which activate in specific locations. The Mosers discovered grid cells in the entorhinal cortex, which generate a hexagonal pattern of internal coordinates.</p>
+                    
+                    <h4>System Functions</h4>
+                    <ul>
+                        <li>Orient us in space</li>
+                        <li>Anchor memories to the places where they were formed</li>
+                        <li>Fundamental for memory and navigation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Neurocartography como subapartado -->
+            <div class="subsection">
+                <h3>Neurocartography</h3>
+                <div class="info-box">
+                    <p>Current research suggests that over-reliance on turn-by-turn GPS navigation is weakening our innate ability to build a mental map of our surroundings. To counter this, a new approach called "neurocartography" proposes designing maps and navigation aids that are aligned with how our brains naturally process spatial information.</p>
+                    
+                    <h4>Brain-Aligned Design</h4>
+                    <ul>
+                        <li>Maps with strong cardinal axes (like a prominent river or street)</li>
+                        <li>Clear network of landmarks</li>
+                        <li>Stabilizes the activity of grid cells</li>
+                        <li>Helps users form a more accurate and stable mental map</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="orientation">
+            <h2>Orientation in Unknown Areas</h2>
+            
+            <div class="info-box">
+                <h3>Wayfinding Concepts</h3>
+                <ul>
+                    <li><strong>Cognitive and Physical Integration:</strong> wayfinding involves both mental representation (understanding where one is and where to go) and embodied interaction (physically moving through space)</li>
+                    <li><strong>Environmental affordances:</strong> People rely on landmarks, routes, signage, and layouts to form spatial understanding</li>
+                    <li><strong>Individual and Contextual Factors:</strong> Wayfinding ability varies by age, experience, culture, familiarity, and cognitive capacity</li>
+                    <li><strong>Cognitive Maps:</strong> An internal mental representation of spatial relationships in an environment</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>Stages of Knowledge Acquisition (Vandenberg, 2016)</h3>
+                <ol>
+                    <li><strong>Landmark knowledge:</strong> recognition of unique features</li>
+                    <li><strong>Route knowledge:</strong> learning sequences between landmarks</li>
+                    <li><strong>Survey knowledge:</strong> developing flexible "cognitive maps"</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <h3>Gender Differences in Navigation</h3>
+                <div class="comparison">
+                    <div class="column">
+                        <h4>Men</h4>
+                        <ul>
+                            <li>More likely to use allocentric, shortcut strategies</li>
+                            <li>Flexible, map-based approach</li>
+                            <li>Often reach destinations more quickly and directly</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h4>Women</h4>
+                        <ul>
+                            <li>More likely to use route-based, sequential strategies</li>
+                            <li>Landmark-focused approach</li>
+                            <li>May rely more on familiar routes, leading to longer paths</li>
+                        </ul>
+                    </div>
+                </div>
+                <p><strong>Moderating Factors:</strong> Differences are statistical trends, not absolutes. Task instructions, experience and confidence can reduce or eliminate differences. Strategies are partly modifiable with training.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Navigation Systems & Orientation Abilities</h3>
+                <ul>
+                    <li><strong>Influence of Navigation Systems:</strong> High automation can reduce attention to surroundings. Reliance on systems may suppress spatial learning and memory. Navigation performance improves short-term but weakens orientation skills long-term.</li>
+                    <li><strong>Innate vs. Learned Abilities:</strong> Orientation is not entirely innate; some natural variation exists. Largely learned and trainable through practice, exploration, and active engagement. Skills can be strengthened by deliberate exposure and navigational training.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="orienteering">
+            <h2>Orienteering</h2>
+            
+            <div class="info-box">
+                <h3>What is Orienteering?</h3>
+                <p>Orienteering is a mental and physical sport where participants use a specialized map and a compass to navigate through control points in sequence.</p>
+                
+                <div class="single-image">
+                    <img src="https://www.bracknell-forest.gov.uk/sites/default/files/styles/manual_custom_crop/public/2024-06/lily-hill-park-orienteering-content-image.jpg?itok=VBK3KVgt" alt="Orienteering Sport">
+                    <div class="image-caption">Orienteering map</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Elements of Orienteering</h3>
+                <ul>
+                    <li>Reading the Map</li>
+                    <li>Orientating the Map</li>
+                    <li>Route Choice</li>
+                    <li>Relocation</li>
+                    <li>Compass Skills</li>
+                    <li>Identifying Features</li>
+                    <li>Steppingstones</li>
+                    <li>Courses (color-coded by difficulty)</li>
+                    <li>Controls (checkpoints like boulders, junctions, hilltops)</li>
+                    <li>Start & Finish (electronic timing)</li>
+                </ul>
+                <p><strong>Tip:</strong> If lost, remember STOP: Stop, Think, Observe, Plan</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Comparison: Topographic vs. Orienteering Maps</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Topographic Map</th>
+                            <th>Orienteering Map</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Purpose</td>
+                            <td>General-purpose; absolute accuracy</td>
+                            <td>Sport navigation; relative accuracy and  runnability</td>
+                        </tr>
+                        <tr>
+                            <td>Scale and Detail</td>
+                            <td>1:25,000–1:50,000; covers large areas, less detail</td>
+                            <td>1:5,000–1:10,000; small area, very detailed</td>
+                        </tr>
+                        <tr>
+                            <td>Relief</td>
+                            <td>May use hillshading</td>
+                            <td>Uses contour and form lines, no shading</td>
+                        </tr>
+                        <tr>
+                            <td>Standards</td>
+                            <td>National mapping rules</td>
+                            <td>IOF international standards</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <h3>Finding Your Way Without a Compass</h3>
+                <ul>
+                    <li><strong>Using a Watch (Sun method):</strong> Point the hour hand toward the sun. The bisector between the hour hand and 12 o'clock indicates south (in the northern hemisphere).</li>
+                    <li><strong>Using the Sun and a Stick:</strong> Place a stick vertically in the ground. Mark the tip of the shadow. Wait 15-20 minutes and mark the new shadow position. The line connecting the two points goes from west to east.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE MAP SECTION -->
+        <section id="interactive-map">
+            <h2>Interactive Map - Ramsau am Dachstein</h2>
+            
+            <div class="info-box">
+                <h3>Practice Your Spatial Cognition Skills</h3>
+                <p>Create points and lines on the map to test your mental mapping abilities in the Ramsau am Dachstein area.</p>
+                
+                <div class="mobile-hint">
+                    <strong>💡 Mobile Tip:</strong> For lines, tap multiple locations on the map to create connected paths.
+                </div>
+                
+                <div class="map-controls">
+                    <button id="drawPoint" class="control-btn active">
+                        <i class="fas fa-map-marker-alt"></i> Points
+                    </button>
+                    <button id="drawLine" class="control-btn">
+                        <i class="fas fa-draw-polygon"></i> Lines
+                    </button>
+                    <button id="clearAll" class="control-btn clear">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+                
+                <div id="map"></div>
+                
+                <div class="map-info">
+                    <h4>Your Markers:</h4>
+                    <div id="markerList">No markers yet. Click/tap on the map to start!</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Lilly Tockner, Viera Mlilo, Jennyfer Samaniego Cruz & Paula Martín Castillo.</p>
+    </footer>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Coordenadas de Ramsau am Dachstein
+            const ramsauCenter = [47.4217, 13.6556];
+            
+            // Inicializar el mapa centrado en Ramsau
+            const map = L.map('map').setView(ramsauCenter, 12);
+            
+            // Añadir capa base - CORREGIDO
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Variables para el dibujo
+            let drawnItems = new L.FeatureGroup();
+            map.addLayer(drawnItems);
+            
+            let currentMode = 'point';
+            let linePoints = [];
+            let tempLine = null;
+
+            // Función para crear marcador personalizado
+            function createCustomMarker(latlng) {
+                return L.marker(latlng, {
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: '<i class="fas fa-map-marker-alt" style="color: #e74c3c; font-size: 20px;"></i>',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 20]
+                    })
+                });
+            }
+
+            // Función para crear línea personalizada
+            function createCustomLine(latlngs) {
+                return L.polyline(latlngs, {
+                    color: '#3498db',
+                    weight: 4,
+                    opacity: 0.8
+                });
+            }
+
+            // Manejar clicks en el mapa
+            map.on('click', function(e) {
+                if (currentMode === 'point') {
+                    // Modo puntos: crear marcador
+                    const marker = createCustomMarker(e.latlng);
+                    marker.addTo(drawnItems);
+                    updateMarkerList();
+                    
+                } else if (currentMode === 'line') {
+                    // Modo líneas: añadir punto a la línea
+                    linePoints.push(e.latlng);
+                    
+                    // Si es el primer punto, crear línea temporal
+                    if (linePoints.length === 1) {
+                        tempLine = createCustomLine(linePoints);
+                        tempLine.addTo(map);
+                    } else {
+                        // Actualizar línea existente
+                        tempLine.setLatLngs(linePoints);
+                    }
+                }
+            });
+
+            // Botones de control
+            document.getElementById('drawPoint').addEventListener('click', function() {
+                currentMode = 'point';
+                resetLineDrawing();
+                updateButtonStates();
+            });
+            
+            document.getElementById('drawLine').addEventListener('click', function() {
+                currentMode = 'line';
+                resetLineDrawing();
+                updateButtonStates();
+            });
+            
+            document.getElementById('clearAll').addEventListener('click', function() {
+                drawnItems.clearLayers();
+                resetLineDrawing();
+                updateMarkerList();
+            });
+
+            // Función para resetear el dibujo de líneas
+            function resetLineDrawing() {
+                if (tempLine) {
+                    map.removeLayer(tempLine);
+                    tempLine = null;
+                }
+                linePoints = [];
+            }
+
+            // Función para finalizar una línea (doble click o cambiar modo)
+            function finishLine() {
+                if (linePoints.length >= 2 && tempLine) {
+                    const finalLine = createCustomLine(linePoints);
+                    finalLine.addTo(drawnItems);
+                    map.removeLayer(tempLine);
+                    tempLine = null;
+                    linePoints = [];
+                    updateMarkerList();
+                }
+            }
+
+            // Doble click para finalizar línea
+            map.on('dblclick', function() {
+                if (currentMode === 'line') {
+                    finishLine();
+                }
+            });
+
+            // Actualizar estados de botones
+            function updateButtonStates() {
+                document.querySelectorAll('.control-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                if (currentMode === 'point') {
+                    document.getElementById('drawPoint').classList.add('active');
+                } else if (currentMode === 'line') {
+                    document.getElementById('drawLine').classList.add('active');
+                }
+            }
+
+            // Actualizar lista de marcadores
+            function updateMarkerList() {
+                const markerList = document.getElementById('markerList');
+                let html = '';
+                let pointCount = 0;
+                let lineCount = 0;
+                
+                drawnItems.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        pointCount++;
+                        const latlng = layer.getLatLng();
+                        html += `
+                            <div class="marker-item">
+                                <strong>📍 Point ${pointCount}</strong><br>
+                                <small>${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}</small>
+                            </div>
+                        `;
+                    } else if (layer instanceof L.Polyline) {
+                        lineCount++;
+                        const latlngs = layer.getLatLngs();
+                        html += `
+                            <div class="marker-item">
+                                <strong>📏 Line ${lineCount}</strong><br>
+                                <small>${latlngs.length} points | ${calculateDistance(latlngs).toFixed(1)} km</small>
+                            </div>
+                        `;
+                    }
+                });
+                
+                if (pointCount === 0 && lineCount === 0) {
+                    markerList.innerHTML = 'No markers yet. Click/tap on the map to start!';
+                } else {
+                    markerList.innerHTML = html;
+                }
+            }
+
+            // Función para calcular distancia
+            function calculateDistance(latlngs) {
+                let totalDistance = 0;
+                for (let i = 1; i < latlngs.length; i++) {
+                    totalDistance += map.distance(latlngs[i-1], latlngs[i]);
+                }
+                return totalDistance / 1000;
+            }
+
+            // Inicializar
+            updateButtonStates();
+            updateMarkerList();
+
+            // Mejorar experiencia táctil
+            if (map.tap) {
+                map.tap.disable();
+            }
+        });
+    </script>
+</body>
+</html>
